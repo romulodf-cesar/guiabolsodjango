@@ -7,6 +7,10 @@
         <h1>Painel Administrativo</h1>
         <p>Bem-vindo ao sistema de gestão do SindApp.</p>
      </header>
+     {% for assoc_id,info in assoc.items %}
+             {{info.nome}}
+             {{info.entidade}}
+     {% endfor %}
 
      <div class="cards-grid">
         <div class="card-status azul">
@@ -32,6 +36,7 @@
 
      <section class="tabela-socios">
         <h2>Últimos Associados Atualizados</h2>
+        
         <div class="linha-socio">
             <span>ID: #001</span>
             <strong>Ricardo Oliveira</strong>

@@ -6,19 +6,33 @@ def index(request):
     dados = {
         1:{
             "nome":"Rômulo",
-            "Entidade":"Senai"
+            "entidade":"Senai",
+            "status":"ativo"
         },
         2:{
             "nome":"Milena",
-            "Entidade":"Brasal"
+            "entidade":"Brasal",
+            "status":"inativo"
         },
         3:{
             "nome":"Daniele",
-            "entidade":"Brasal"
+            "entidade":"Brasal",
+            "status": "pendente"
         },
         4:{
             "nome":"Erik",
-            "entidade":"Café Export"
+            "entidade":"Café Export",
+            "status":"ativo"
+        },
+        5:{
+            "nome":"Artur",
+            "entidade":"Brasal",
+            "status":"inativo"
+        },
+        6:{
+            "nome":"Mônica",
+            "entidade":"Brasal",
+            "status":"ativo"
         }
     }
     # O Django buscará automaticamente dentro da pasta templates/

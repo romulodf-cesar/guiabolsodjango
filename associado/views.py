@@ -1,9 +1,11 @@
 from django.http import HttpResponse
 from django.shortcuts import render
+from associado.models import Associado
 
 def index(request):
     # um dicionário tem uma chave e um valor
-    dados = {
+    """
+      dados = {
         1:{
             "nome":"Rômulo",
             "entidade":"Senai",
@@ -34,9 +36,13 @@ def index(request):
             "entidade":"Brasal",
             "status":"ativo"
         }
-    }
+    }    
+    
+    """
+    associados = Associado.objects.all()
+  
     # O Django buscará automaticamente dentro da pasta templates/
-    return render(request,'associado/index.html' ,{"assoc":dados})
+    return render(request,'associado/index.html' ,{"assoc":associados})
 # Função para carregar o perfil do associado
 def perfil(request):
     return render(request, 'associado/perfil.html')
@@ -46,3 +52,6 @@ def beneficios(request):
 def carteirinha(request):
     # Aqui passamos o contexto 'vibe pwa' para o template
     return render(request, 'associado/carteirinha.html')
+
+def empresa(request):
+    pass

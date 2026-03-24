@@ -1,6 +1,6 @@
 from django.http import HttpResponse
 from django.shortcuts import render
-from associado.models import Associado
+from associado.models import Associado,Empresa
 
 def index(request):
     # um dicionário tem uma chave e um valor
@@ -54,4 +54,5 @@ def carteirinha(request):
     return render(request, 'associado/carteirinha.html')
 
 def empresa(request):
-    pass
+    empresas = Empresa.objects.all()
+    return render(request,'associado/empresa.html',{"empre":empresas})

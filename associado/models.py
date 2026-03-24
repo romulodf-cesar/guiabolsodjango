@@ -11,8 +11,6 @@ class Associado(models.Model):
 
 class Empresa(models.Model):
     nome = models.CharField(max_length=80,null=False,blank=False)
-    cnpj = models.CharField(max_length=14,null=False,blank=False)
-  
-
+    cnpj = models.CharField(max_length=16,null=False,blank=False)
     def __str__(self):
         return f"dados do objeto: {self.nome} - {self.cnpj}"

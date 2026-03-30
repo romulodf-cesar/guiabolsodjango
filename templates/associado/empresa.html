@@ -7,6 +7,8 @@
             <div class="linha-socio">
                 <span>ID: {{e.id}}</span>
                 <strong> {{e.nome}}:{{e.cnpj}}</strong>
+                <!-- se cidade for none então mostrar "Cidade não informada" -->
+                <strong> {{e.cidade|default:"Cidade não informada"}}</strong>
                 <a href="{% url 'empresa' %}" class="btn-link">Ver Detalhes</a>
             </div>
             {% endfor %}

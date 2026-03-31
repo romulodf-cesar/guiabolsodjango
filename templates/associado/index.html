@@ -36,7 +36,7 @@
         {% for info in assoc %}
         <div class="linha-socio">
             <span>ID: #001</span>
-            <strong> {{info.nome}}:{{info.fk_empresa_id|default:"Empresa não informada"}}</strong>
+            <strong> {{info.orgao}}:{{info.fk_empresa_id|default:"Empresa não informada"}}</strong>
             <span class="badge ativo">{{info.status}}</span>
             <a href="{% url 'perfil' %}" class="btn-link">Ver Perfil</a>
         </div>

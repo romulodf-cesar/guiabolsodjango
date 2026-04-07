@@ -11,16 +11,16 @@
 
      <div class="cards-grid">
         <div class="card-status azul">
-            <h3>1.240</h3>
+            <h3>{{stats.ativos}}</h3>
             <p>Sócios Ativos</p>
         </div>
-        <div class="card-status verde">
-            <h3>45</h3>
-            <p>Novas Adesões</p>
-        </div>
         <div class="card-status laranja">
-            <h3>12</h3>
+            <h3>{{stats.pendentes}}</h3>
             <p>Pendentes</p>
+        </div>
+        <div class="card-status verde">
+            <h3>{{stats.inativos}}</h3>
+            <p>Inativos</p>
         </div>
      </div>
 
@@ -33,14 +33,7 @@
 
      <section class="tabela-socios">
         <h2>Últimos Associados Atualizados</h2>
-        {% for info in assoc %}
-        <div class="linha-socio">
-            <span>ID: #001</span>
-            <strong> {{info.orgao}}:{{info.fk_empresa_id|default:"Empresa não informada"}}</strong>
-            <span class="badge ativo">{{info.status}}</span>
-            <a href="{% url 'perfil' %}" class="btn-link">Ver Perfil</a>
-        </div>
-        {% endfor %}
+       
 
      </section>
    </main>

@@ -1,9 +1,9 @@
 {% load static %}
-<section class="container-busca">
+<form method="GET" action="{% url 'index' %}" class="container-busca">
     <div class="busca-wrapper">
-        <input type="text" placeholder="Pesquisar por nome, CPF ou matrícula..." class="input-busca">
+        <input type="text" name="q" placeholder="Pesquisar por nome ou empresa..." class="input-busca" value="{{busca}}">
         <button type="submit" class="btn-busca">
             <span>🔍</span> Buscar
         </button>
     </div>
-</section>
+</form>

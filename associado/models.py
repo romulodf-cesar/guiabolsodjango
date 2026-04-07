@@ -1,56 +1,61 @@
 from django.db import models
+from django.core.exceptions import ValidationError
 
-# Create your models here.
-class Associado(models.Model):
-    LISTA_STATUS = [
-        ('ATIVO', 'Ativo'),
-        ('INATIVO', 'Inativo'),
-        ('PENDENTE', 'Pendente'),
-    ]
-    nome = models.CharField(max_length=80,null=False,blank=False)
-    status = models.CharField(max_length=15,null=False,blank=False,choices=LISTA_STATUS)
-    # criar um atributo fk_empresa_id que seja uma chave estrangeira para a tabela empresa
-    fk_empresa_id = models.ForeignKey('Empresa', on_delete=models.CASCADE, null=True, blank=True,verbose_name='Empresa')
+class Endereco(models.Model):
+    rua = models.CharField(max_length=100, null=False, blank=False)
+    numero = models.CharField(max_length=10, null=False, blank=False)
+    bairro = models.CharField(max_length=50, null=False, blank=False)
+    cidade = models.CharField(max_length=50, null=False, blank=False)
+    estado = models.CharField(max_length=2, null=False, blank=False)
+    cep = models.CharField(max_length=8, null=False, blank=False)
+    # Permite ligar a um Associado OU a uma Empresa
+    associado = models.OneToOneField('Associado', on_delete=models.CASCADE, null=True, blank=True, related_name='endereco')
+    empresa = models.OneToOneField('Empresa', on_delete=models.CASCADE, null=True, blank=True, related_name='endereco_empresa')
+
     def __str__(self):
-        return f"dados do objeto: {self.nome} - {self.fk_empresa_id} - {self.status}"
-# faça uma chave estrangeira com empresa
-
-
+        return f"{self.rua}, {self.numero} - {self.bairro}, {self.cidade}/{self.estado} - CEP: {self.cep}"
+    
+    # definir o nome da tabela
+    class Meta:
+        db_table = 'endereco'
 class Empresa(models.Model):
-    orgao = models.CharField(max_length=80,null=False,blank=False)
-    cnpj = models.CharField(max_length=16,null=False,blank=False)
-    ativo = models.BooleanField(default=True)
-    sigla_orgao = models.CharField(max_length=10,null=True,blank=True)
-    nome_contato = models.CharField(max_length=80,null=True,blank=True)
-    endereco = models.CharField(max_length=60,null=True,blank=True)
-    bairro = models.CharField(max_length=60,null=True,blank=True)   
-    cidade = models.CharField(max_length=60,null=True,blank=True)
-    """
-       PascalCasing: Empresa, Associado
-       camelCase: empresa, associado
-       SNAKE_CASE: UF_CHOICES, LISTA_STATUS
-       UPPERCASE: SECRET_KEY, DEBUG
-    
-    
-    """
-    UF_CHOICES = [
-        ('AC', 'Acre'), ('AL', 'Alagoas'), ('AP', 'Amapá'), ('AM', 'Amazonas'),
-        ('BA', 'Bahia'), ('CE', 'Ceará'), ('DF', 'Distrito Federal'), ('ES', 'Espírito Santo'),
-        ('GO', 'Goiás'), ('MA', 'Maranhão'), ('MT', 'Mato Grosso'), ('MS', 'Mato Grosso do Sul'),
-        ('MG', 'Minas Gerais'), ('PA', 'Pará'), ('PB', 'Paraíba'), ('PR', 'Paraná'),
-        ('PE', 'Pernambuco'), ('PI', 'Piauí'), ('RJ', 'Rio de Janeiro'), ('RN', 'Rio Grande do Norte'),
-        ('RS', 'Rio Grande do Sul'), ('RO', 'Rondônia'), ('RR', 'Roraima'), ('SC', 'Santa Catarina'),
-        ('SP', 'São Paulo'), ('SE', 'Sergipe'), ('TO', 'Tocantins'),
-    ]
-    uf = models.CharField(
-        max_length=2,
-        choices=UF_CHOICES,
-        default='DF',
-        verbose_name="UF"
-    )
-    cep = models.CharField(max_length=10,null=True,blank=True)
-    telefone = models.CharField(max_length=20,null=True,blank=True)
-    email = models.CharField(max_length=80,null=True,blank=True)  
+    nome = models.CharField(max_length=100, null=False, blank=False)
+    cnpj = models.CharField(max_length=14, null=False, blank=False,unique=True)  
+   
+    def clean(self):
+        # Exemplo: remover pontos e traços antes de validar (caso o usuário digite com máscara)
+        self.cnpj = ''.join(filter(str.isdigit, self.cnpj))
+        
+        # Verifica se já existe outra empresa com este CNPJ (excluindo a própria empresa em caso de edição)
+        if Empresa.objects.filter(cnpj=self.cnpj).exclude(pk=self.pk).exists():
+            raise ValidationError({'cnpj': "Já existe uma empresa cadastrada com este CNPJ."})
     def __str__(self):
-        return f"{self.orgao}"  
+        return self.nome+" - CNPJ: " + self.cnpj
     
+    # definir o nome da tabela
+    class Meta:
+        db_table = 'empresa'
+
+
+class Associado(models.Model):
+    nome = models.CharField(max_length=100, null=False, blank=False)
+    email = models.EmailField(max_length=100, null=False, blank=False)
+    cpf = models.CharField(max_length=11, null=False, blank=False,unique=True)
+    ativo = models.BooleanField(default=True, null=False, blank=False)
+    
+   # Relação N:1 (Muitos associados para uma empresa)
+    empresa = models.ForeignKey(
+        Empresa, 
+        on_delete=models.CASCADE, 
+        null=True, 
+        blank=True, 
+        related_name='associados'
+    )
+
+    def __str__(self):
+        return self.nome+" - Ativo: " + str(self.ativo)
+    
+    # definir o nome da tabela
+    class Meta:
+        db_table = 'associado'
+

@@ -1,6 +1,7 @@
 from django.http import HttpResponse
 from django.shortcuts import render
 from associado.models import Associado,Empresa
+from django.db.models import Q
 
 def index(request):
     # um dicionário tem uma chave e um valor
@@ -39,10 +40,23 @@ def index(request):
     }    
     
     """
-    associados = Associado.objects.all()
+    query = request.GET.get('q')
+    if query:
+        associados = Associado.objects.filter(
+            Q(nome__icontains=query) | Q(fk_empresa_id__orgao__icontains=query)
+        )
+    else:
+        associados = Associado.objects.all()
   
+    # Estatisticas
+    stats = {
+        #"ativos": Associado.objects.filter(status="ATIVO").count(),
+        #"pendentes": Associado.objects.filter(status="PENDENTE").count(),
+        #"inativos": Associado.objects.filter(status="INATIVO").count()
+    }
     # O Django buscará automaticamente dentro da pasta templates/
-    return render(request,'associado/index.html' ,{"assoc":associados})
+    return render(request,'associado/index.html' ,{"assoc":associados, "busca":query, "stats":stats})
+
 # Função para carregar o perfil do associado
 def perfil(request):
     return render(request, 'associado/perfil.html')
@@ -54,5 +68,5 @@ def carteirinha(request):
     return render(request, 'associado/carteirinha.html')
 
 def empresa(request):
-    empresas = Empresa.objects.all()
-    return render(request,'associado/empresa.html',{"empre":empresas})
+    # empresas = Empresa.objects.all()
+    return render(request,'associado/empresa.html')
